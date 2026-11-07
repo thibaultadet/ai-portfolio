@@ -1,0 +1,7 @@
+export default function Footer() {
+  return (
+    <footer className="mt-20 border-t border-[var(--line)] px-4 py-10 text-sm text-[var(--sea-ink-soft)]">
+      <div className="page-wrap">&copy; {new Date().getFullYear()}</div>
+    </footer>
+  )
+}
