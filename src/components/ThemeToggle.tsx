@@ -1,4 +1,3 @@
-import { cn } from "cn";
 import { type LucideIcon, Monitor, Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
 import { RadioGroup, RadioGroupItem } from "#/components/ui/radio-group";
@@ -87,13 +86,9 @@ export default function ThemeToggle({
 			orientation="horizontal"
 		>
 			{Object.entries(MODES).map(([key, { label, icon: Icon }]) => (
-				<RadioGroupItem key={key} value={key}>
+				<RadioGroupItem key={key} value={key} title={label}>
 					<Icon strokeWidth={1.5} size={18} />
-					<span
-						className={cn("sr-only", {
-							"sm:not-sr-only": !compact,
-						})}
-					>
+					<span className={compact ? "sr-only" : "sr-only sm:not-sr-only"}>
 						{label}
 					</span>
 				</RadioGroupItem>
