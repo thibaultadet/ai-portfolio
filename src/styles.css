@@ -1,8 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;700;900&display=swap');
-@import 'tailwindcss';
+@import url("https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;700;900&display=swap");
+@import "tailwindcss";
 @plugin '@tailwindcss/typography';
 
-@import 'tw-animate-css';
+@import "tw-animate-css";
 
 /* Le thème est posé par THEME_INIT_SCRIPT (__root.tsx) : classe .dark sur <html>. */
 @custom-variant dark (&:is(.dark *));
@@ -92,7 +92,9 @@
 }
 
 @theme inline {
-  --font-sans: 'Schibsted Grotesk', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-sans:
+    "Schibsted Grotesk", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    sans-serif;
 
   /* shadcn */
   --color-background: var(--background);
@@ -186,20 +188,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-a {
-  color: var(--sage);
-  text-underline-offset: 2px;
-}
-
-a:hover {
-  color: var(--sage-hover);
-}
-
-.page-wrap {
-  width: min(1080px, calc(100% - 2rem));
-  margin-inline: auto;
-}
-
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -210,6 +198,20 @@ a:hover {
   :focus-visible {
     outline: 2px solid var(--ring);
     outline-offset: 2px;
+  }
+  a {
+    color: var(--sage);
+    text-underline-offset: 2px;
+  }
+  a:hover {
+    color: var(--sage-hover);
+  }
+}
+
+@layer components {
+  .page-wrap {
+    width: min(1080px, calc(100% - 2rem));
+    margin-inline: auto;
   }
 }
 
