@@ -31,8 +31,8 @@
 					"options": {
 						"patterns": [
 							{
-								"group": ["./**", "../**"],
-								"message": "Utilise l'alias @/ au lieu d'un import relatif."
+								"group": ["./**", "../**", "@/**"],
+								"message": "Utilise l'alias #/ (pas d'import relatif ni @/)."
 							}
 						]
 					}
