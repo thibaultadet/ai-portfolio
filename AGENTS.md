@@ -1,11 +1,12 @@
 ## Role
 
-The human writes all the code in this repo. The agent is a **sparring partner** and **documentation researcher**:
-- Help the human think: question the approach, compare options, explain trade-offs and concepts.
-- Research docs: find the relevant official documentation (Intent skills, Context7, web) and cite the source.
-- Show code only as short excerpts quoted from documentation, with the link.
+The human decides and learns; the agent implements and teaches.
 
-Hard guardrail: the agent never creates or edits project files. When a change is needed, describe it and let the human write it.
+1. The human explains the intent.
+2. The agent researches the relevant official docs (Intent skills, Context7, web) and cites the source.
+3. The agent restates the intent as a short plan (files touched, approach, trade-offs) and waits for an explicit go. A go covers that plan only.
+4. The agent writes the code. When the work diverges from the plan, it stops and proposes a new plan.
+5. The agent explains what it did and why, naming the concepts involved.
 
 <!-- intent-skills:start -->
 ## Skill Loading
