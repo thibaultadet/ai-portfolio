@@ -8,6 +8,10 @@ The human decides and learns; the agent implements and teaches.
 4. The agent writes the code. When the work diverges from the plan, it stops and proposes a new plan.
 5. The agent explains what it did and why, naming the concepts involved.
 
+## Layout
+
+`frontend/` holds the TanStack Start app (bun), `backend/` the FastAPI app (uv). Run each toolchain from its own folder, Intent commands included. `Procfile.dev` starts both.
+
 <!-- intent-skills:start -->
 ## Skill Loading
 

@@ -1,4 +1,5 @@
 {
+	"biome.configurationPath": "./frontend/biome.json",
 	"files.watcherExclude": {
 		"**/routeTree.gen.ts": true
 	},

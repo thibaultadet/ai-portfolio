@@ -1,4 +1,11 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "framework": "tanstack-start"
+  "services": {
+    "web": { "root": "frontend/", "framework": "tanstack-start" },
+    "api": { "root": "backend/", "framework": "fastapi", "entrypoint": "main:app" }
+  },
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": { "service": "api" } },
+    { "source": "/(.*)", "destination": { "service": "web" } }
+  ]
 }
