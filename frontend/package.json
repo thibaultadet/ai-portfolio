@@ -12,7 +12,8 @@
     "preview": "vite preview",
     "format": "biome format",
     "lint": "biome lint",
-    "check": "biome check"
+    "check": "biome check",
+    "gen:api": "openapi-typescript http://localhost:8000/openapi.json -o src/lib/api/schema.gen.ts"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.18",
@@ -27,6 +28,7 @@
     "cn": "^0.5.2",
     "lucide-react": "^0.577.0",
     "nitro": "3.0.260610-beta",
+    "openapi-fetch": "^0.17.0",
     "radix-ui": "^1.8.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
@@ -44,6 +46,7 @@
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
     "@vitejs/plugin-react": "^6.0.1",
+    "openapi-typescript": "^7.13.0",
     "typescript": "^6.0.2",
     "vite": "^8.0.0"
   },
