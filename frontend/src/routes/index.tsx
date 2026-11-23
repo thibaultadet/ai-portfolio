@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import Chat from "#/components/Chat";
+import ChatPanel from "#/components/chat/ChatPanel";
 
 export const Route = createFileRoute("/")({ component: Home });
 
@@ -7,7 +7,7 @@ function Home() {
 	return (
 		<main className="page-wrap px-4 py-12">
 			<h1>Thibault Adet</h1>
-			<Chat />
+			<ChatPanel />
 		</main>
 	);
 }
