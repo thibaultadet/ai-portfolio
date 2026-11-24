@@ -9,20 +9,18 @@ import { type ChatMessage, streamChat } from "#/lib/api/chat-stream";
 
 type UIMessage = ChatMessage & { id: string };
 
-const SUGGESTIONS: { kind: SuggestionKind; label: string; question: string }[] =
-	[
-		{
-			kind: "project",
-			label: "Ses projets",
-			question: "Quels projets a-t-il réalisés ?",
-		},
-		{
-			kind: "stack",
-			label: "Sa stack",
-			question: "Quelle est sa stack technique ?",
-		},
-		{ kind: "cv", label: "Son parcours", question: "Résume son parcours." },
-	];
+const WELCOME: ChatMessage = {
+	role: "assistant",
+	content:
+		"Bonjour. Je connais le parcours de Thibault par cœur, rien de plus. Posez vos questions.",
+};
+
+const SUGGESTIONS: { kind: SuggestionKind; question: string }[] = [
+	{ kind: "project", question: "Quelle est son expérience avec Rails ?" },
+	{ kind: "stack", question: "Qu'a-t-il construit chez Beny ?" },
+	{ kind: "cv", question: "A-t-il déjà encadré une équipe ?" },
+	{ kind: "project", question: "Est-il disponible maintenant ?" },
+];
 
 type Failure = { title: string; question: string };
 
@@ -123,7 +121,27 @@ const ChatPanel = () => {
 				className="scrollbar-chat flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto px-5 pt-5 pb-3"
 				aria-live="polite"
 			>
-				<div className="mt-auto" />
+				{messages.length === 0 ? (
+					<>
+						<ChatBubble {...WELCOME} />
+						<div className="flex flex-col gap-2">
+							<span className="text-overline text-ink-muted uppercase">
+								Pour démarrer
+							</span>
+							{SUGGESTIONS.map(({ kind, question }) => (
+								<SuggestionChip
+									key={question}
+									kind={kind}
+									label={question}
+									onClick={() => send(question)}
+									disabled={isStreaming || isRateLimited}
+								/>
+							))}
+						</div>
+					</>
+				) : (
+					<div className="mt-auto" />
+				)}
 				{messages.map(({ id, role, content }) => (
 					<ChatBubble
 						key={id}
@@ -143,20 +161,7 @@ const ChatPanel = () => {
 					<ChatNotice variant="rate-limit" secondsLeft={secondsLeft} />
 				)}
 			</div>
-			<div className="flex flex-col gap-3 px-5 pb-5">
-				{messages.length === 0 && (
-					<div className="flex flex-wrap gap-2">
-						{SUGGESTIONS.map(({ kind, label, question }) => (
-							<SuggestionChip
-								key={kind}
-								kind={kind}
-								label={label}
-								onClick={() => send(question)}
-								disabled={isStreaming || isRateLimited}
-							/>
-						))}
-					</div>
-				)}
+			<div className="px-5 pb-5">
 				<ChatComposer
 					input={input}
 					onInputChange={setInput}
