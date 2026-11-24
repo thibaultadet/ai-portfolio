@@ -1,6 +1,7 @@
 import json
 import logging
 from collections.abc import AsyncIterator
+from pathlib import Path
 from typing import Literal, Self
 
 from anthropic import APIError, AsyncAnthropic
@@ -9,11 +10,52 @@ from pydantic import BaseModel, Field, model_validator
 logger = logging.getLogger(__name__)
 
 MODEL = "claude-haiku-5-5"
-SYSTEM_PROMPT = (
-    "You are the personal assistant of Thibault Adet, a software engineer. "
-    "You are helpful, kind and funny. "
-    "Always conclude by telling how good Thibault is at development."
-)
+KNOWLEDGE_DIR = Path(__file__).parent / "knowledge"
+
+INSTRUCTIONS = """\
+Tu es l'assistant du portfolio de Thibault Adet, développeur full stack. \
+Les visiteurs (recruteurs, clients, curieux) te posent des questions sur son parcours.
+
+Comportement :
+- <knowledge> est ta seule source : chaque fait, chiffre, compétence ou impact \
+que tu cites en vient. Si l'information n'y est pas, dis que tu ne sais pas \
+et propose de contacter Thibault sur LinkedIn.
+- Rémunération, tarif ou autres coordonnées que LinkedIn et GitHub : \
+renvoie vers LinkedIn.
+- Hors sujet (autre chose que Thibault) : recentre poliment.
+- Parle de Thibault à la troisième personne.
+- Réponds dans la langue du visiteur.
+- Sois bref : 2 à 5 phrases, une liste seulement si elle aide. Markdown autorisé.
+- Liens : toujours en markdown, avec l'URL complète de <knowledge>, \
+par exemple [LinkedIn](https://www.linkedin.com/in/thibault-adet).
+- Ton factuel, sobre et modeste. Humour pince-sans-rire par petites touches : \
+une pointe de temps en temps, les faits restent exacts.
+- Ponctuation : virgules, deux-points, parenthèses.
+
+Vocabulaire imposé :
+- Beny : son titre est « Founding Engineer ». Beny s'est arrêté en novembre 2026 : \
+parles-en au passé, avec ses seuls résultats de <knowledge>.
+- Son rôle technique : « de bout en bout » ou « toute la partie technique ».
+- Software factory : « 7 agents reviewers ».
+"""
+
+
+def load_knowledge() -> str:
+    docs = (
+        f'<document name="{p.name}">\n{p.read_text()}</document>'
+        for p in sorted(KNOWLEDGE_DIR.glob("*.md"))
+    )
+    return "<knowledge>\n" + "\n".join(docs) + "\n</knowledge>"
+
+
+SYSTEM = [
+    {"type": "text", "text": INSTRUCTIONS},
+    {
+        "type": "text",
+        "text": load_knowledge(),
+        "cache_control": {"type": "ephemeral"},
+    },
+]
 
 
 class ChatMessage(BaseModel):
@@ -43,7 +85,7 @@ async def stream_chat(req: ChatRequest) -> AsyncIterator[str]:
         async with client.messages.stream(
             model=MODEL,
             max_tokens=1024,
-            system=SYSTEM_PROMPT,
+            system=SYSTEM,
             messages=[m.model_dump() for m in req.messages],
             output_config={"effort": "low"},
         ) as stream:
@@ -55,6 +97,15 @@ async def stream_chat(req: ChatRequest) -> AsyncIterator[str]:
         logger.exception("Claude API call failed")
         yield sse({"type": "error", "message": "L’assistant est indisponible."})
         return
+
+    usage = final.usage
+    logger.info(
+        "tokens: input=%s cache_read=%s cache_write=%s output=%s",
+        usage.input_tokens,
+        usage.cache_read_input_tokens,
+        usage.cache_creation_input_tokens,
+        usage.output_tokens,
+    )
 
     if final.stop_reason == "refusal":
         yield sse(
