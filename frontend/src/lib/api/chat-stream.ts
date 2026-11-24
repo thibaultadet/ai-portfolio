@@ -6,7 +6,19 @@ export type ChatMessage = components["schemas"]["ChatMessage"];
 export type ChatEvent =
 	| { type: "text"; text: string }
 	| { type: "done" }
-	| { type: "error"; message: string };
+	| { type: "error"; message: string }
+	| { type: "rate-limit"; retryAfter: number };
+
+const DEFAULT_RETRY_AFTER = 60;
+
+const parseRetryAfter = (header: string | null): number => {
+	if (!header) return DEFAULT_RETRY_AFTER;
+	const seconds = Number(header);
+	if (Number.isFinite(seconds)) return Math.max(1, Math.ceil(seconds));
+	const date = Date.parse(header);
+	if (Number.isNaN(date)) return DEFAULT_RETRY_AFTER;
+	return Math.max(1, Math.ceil((date - Date.now()) / 1000));
+};
 
 export async function* streamChat(
 	messages: ChatMessage[],
@@ -20,8 +32,8 @@ export async function* streamChat(
 
 	if (response.status === 429) {
 		yield {
-			type: "error",
-			message: "Trop de messages, réessaie dans une minute",
+			type: "rate-limit",
+			retryAfter: parseRetryAfter(response.headers.get("Retry-After")),
 		};
 		return;
 	}

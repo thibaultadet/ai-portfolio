@@ -1,25 +1,30 @@
 import { type SubmitEvent, useEffect, useRef, useState } from "react";
 import ChatBubble from "#/components/chat/ChatBubble";
 import ChatComposer from "#/components/chat/ChatComposer";
+import ChatNotice from "#/components/chat/ChatNotice";
 import { type ChatMessage, streamChat } from "#/lib/api/chat-stream";
 
 type UIMessage = ChatMessage & { id: string };
+
+type Failure = { title: string; question: string };
 
 const ChatPanel = () => {
 	const [messages, setMessages] = useState<UIMessage[]>([]);
 	const [input, setInput] = useState("");
 	const [isStreaming, setIsStreaming] = useState(false);
-	const [error, setError] = useState<string | null>(null);
+	const [failure, setFailure] = useState<Failure | null>(null);
+	const [secondsLeft, setSecondsLeft] = useState(0);
 	const abortRef = useRef<AbortController | null>(null);
 	const endRef = useRef<HTMLDivElement>(null);
 
-	const send = async (e: SubmitEvent<HTMLFormElement>) => {
-		e.preventDefault();
-		const content = input.trim();
-		if (!content || isStreaming) return;
+	const isRateLimited = secondsLeft > 0;
 
+	const send = async (content: string) => {
+		if (!content || isStreaming || isRateLimited) return;
+
+		const base = messages.filter((m) => m.content);
 		const history: UIMessage[] = [
-			...messages.filter((m) => m.content),
+			...base,
 			{ id: crypto.randomUUID(), role: "user", content },
 		];
 		setMessages([
@@ -28,7 +33,16 @@ const ChatPanel = () => {
 		]);
 		setInput("");
 		setIsStreaming(true);
-		setError(null);
+		setFailure(null);
+
+		const rollback = () => {
+			setMessages(base);
+			setInput(content);
+		};
+		const fail = (title: string) => {
+			rollback();
+			setFailure({ title, question: content });
+		};
 
 		const controller = new AbortController();
 		abortRef.current = controller;
@@ -46,13 +60,15 @@ const ChatPanel = () => {
 						];
 					});
 				}
-				if (event.type === "error") {
-					setError(event.message);
+				if (event.type === "error") fail(event.message);
+				if (event.type === "rate-limit") {
+					rollback();
+					setSecondsLeft(event.retryAfter);
 				}
 			}
 		} catch (err) {
 			if (!(err instanceof DOMException && err.name === "AbortError")) {
-				setError("Connexion perdue");
+				fail("Connexion perdue");
 			}
 		} finally {
 			setIsStreaming(false);
@@ -60,12 +76,23 @@ const ChatPanel = () => {
 		}
 	};
 
+	const handleSubmit = (e: SubmitEvent<HTMLFormElement>) => {
+		e.preventDefault();
+		send(input.trim());
+	};
+
+	useEffect(() => {
+		if (!secondsLeft) return;
+		const timer = setTimeout(() => setSecondsLeft((s) => s - 1), 1000);
+		return () => clearTimeout(timer);
+	}, [secondsLeft]);
+
 	useEffect(() => () => abortRef.current?.abort(), []);
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: messages déclenche le scroll sans être lu.
+	// biome-ignore lint/correctness/useExhaustiveDependencies: messages et les bandeaux déclenchent le scroll sans être lus.
 	useEffect(() => {
 		endRef.current?.scrollIntoView({ block: "end" });
-	}, [messages]);
+	}, [messages, failure, isRateLimited]);
 
 	const lastId = messages.at(-1)?.id;
 
@@ -84,10 +111,15 @@ const ChatPanel = () => {
 						isStreaming={isStreaming && id === lastId}
 					/>
 				))}
-				{error && (
-					<p role="alert" className="text-label text-danger">
-						{error}
-					</p>
+				{failure && (
+					<ChatNotice
+						variant="error"
+						title={failure.title}
+						onRetry={() => send(failure.question)}
+					/>
+				)}
+				{isRateLimited && (
+					<ChatNotice variant="rate-limit" secondsLeft={secondsLeft} />
 				)}
 				<div ref={endRef} />
 			</div>
@@ -95,9 +127,10 @@ const ChatPanel = () => {
 				<ChatComposer
 					input={input}
 					onInputChange={setInput}
-					onSubmit={send}
+					onSubmit={handleSubmit}
 					onStop={() => abortRef.current?.abort()}
 					isStreaming={isStreaming}
+					secondsLeft={secondsLeft}
 				/>
 			</div>
 		</div>

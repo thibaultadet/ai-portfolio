@@ -27,7 +27,7 @@ class ChatRequest(BaseModel):
     @model_validator(mode="after")
     def last_message_from_user(self) -> Self:
         if self.messages[-1].role != "user":
-            raise ValueError("The last message must be from the user.")
+            raise ValueError("Le dernier message doit venir du visiteur.")
         return self
 
 
@@ -53,10 +53,15 @@ async def stream_chat(req: ChatRequest) -> AsyncIterator[str]:
             final = await stream.get_final_message()
     except APIError:
         logger.exception("Claude API call failed")
-        yield sse({"type": "error", "message": "The assistant is unavailable."})
+        yield sse({"type": "error", "message": "L’assistant est indisponible."})
         return
 
     if final.stop_reason == "refusal":
-        yield sse({"type": "error", "message": "The assistant can't answer that."})
+        yield sse(
+            {
+                "type": "error",
+                "message": "L’assistant ne peut pas répondre à cette question.",
+            }
+        )
     else:
         yield sse({"type": "done"})
