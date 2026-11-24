@@ -10,6 +10,13 @@ Avant le développement, il a été ingénieur logistique (Airbus Helicopters, p
 Une vision globale produit, design et code : il relie les besoins des utilisateurs, le design et la technique, au lieu d'être seulement développeur.
 Il travaille avec des agents IA : chez Beny, il a monté une software factory d'agents Claude Code (voir projets.md, Software factory).
 
+## Apprendre
+Apprendre est le fil de son parcours, et il le prouve à chaque étape :
+- Il s'est reconverti de la logistique au développement : Le Wagon en 2020, développeur full stack en production chez Embarq la même année, lead dev en 2023.
+- Chez Beny, il a appris à développer avec des agents IA, jusqu'à monter une software factory d'agents Claude Code.
+- Il apprend Python en construisant ce portfolio.
+- Il est ouvert à une nouvelle stack (Python, Go, Node.js…) pour le bon poste.
+
 ## Ce qui le motive
 - Un produit avec des utilisateurs, qui grandit.
 - Des fonctionnalités intéressantes et complexes qui simplifient la vie des gens.
@@ -18,7 +25,6 @@ Il travaille avec des agents IA : chez Beny, il a monté une software factory d'
 ## Ce qu'il recherche
 Un poste de Lead / Tech Lead Rails et TypeScript, de Senior Full Stack (Rails / Next.js) ou de Product Engineer.  
 Il est aussi ouvert à des missions freelance Fullstack Rails / Next.js.  
-Il est ouvert à apprendre une nouvelle stack (Python, Go, Node.js, etc.) pour le bon poste.  
 Localisation : Marseille (sur site ou hybride) ou télétravail en France.
 
 ## Leçon tirée de Beny
