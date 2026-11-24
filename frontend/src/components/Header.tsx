@@ -1,32 +1,40 @@
 import { Link } from "@tanstack/react-router";
 import ThemeToggle from "#/components/ThemeToggle";
-import { Button } from "#/components/ui/button";
 
 const NAV_LINKS = [
-	{ path: "career", label: "Parcours" },
-	{ path: "projects", label: "Projets" },
-	{ path: "stack", label: "Stack" },
-	{ path: "contact", label: "Contact" },
+	{ hash: "parcours", label: "Parcours" },
+	{ hash: "projets", label: "Projets" },
+	{ hash: "stack", label: "Stack" },
+	{ hash: "contact", label: "Contact" },
 ];
 
 export default function Header() {
 	return (
-		<header className="sticky top-0 z-50 px-4 backdrop-blur-lg bg-background/80">
-			<nav className="page-wrap flex items-center justify-between gap-3 py-3 sm:py-4">
-				<Link to="/" className="font-black text-foreground no-underline">
+		<header className="sticky top-0 z-50 bg-background/80 backdrop-blur-lg">
+			<div className="page-wrap flex items-center justify-between gap-4 py-5">
+				<Link
+					to="/"
+					className="text-body-lg font-black tracking-[-0.02em] text-ink no-underline hover:text-ink"
+				>
 					Thibault Adet
 				</Link>
-				<div className="hidden sm:flex items-center">
+				<nav
+					aria-label="Sections"
+					className="hidden items-center gap-6 sm:flex"
+				>
 					{NAV_LINKS.map((link) => (
-						<Button variant="link" key={link.path} asChild size="sm">
-							<Link to="/" hash={link.path}>
-								{link.label}
-							</Link>
-						</Button>
+						<Link
+							key={link.hash}
+							to="/"
+							hash={link.hash}
+							className="text-label text-ink no-underline hover:text-sage"
+						>
+							{link.label}
+						</Link>
 					))}
-				</div>
+				</nav>
 				<ThemeToggle compact />
-			</nav>
+			</div>
 		</header>
 	);
 }

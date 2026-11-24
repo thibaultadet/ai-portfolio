@@ -238,9 +238,9 @@ body {
 }
 
 @layer components {
+  /* Conteneur de page : 1200px max, marge 16px mobile, 40px dès 640px. */
   .page-wrap {
-    width: min(1080px, calc(100% - 2rem));
-    margin-inline: auto;
+    @apply mx-auto w-full max-w-300 px-4 sm:px-10;
   }
 }
 

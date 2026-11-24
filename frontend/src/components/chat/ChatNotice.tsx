@@ -1,7 +1,7 @@
-import { cn } from "cn";
 import { CircleAlert, Clock, RotateCcw } from "lucide-react";
 import type { ReactNode } from "react";
 import { Button } from "#/components/ui/button";
+import { cn } from "#/lib/utils";
 
 type ChatNoticeProps =
 	| { variant: "error"; title: string; onRetry: () => void }

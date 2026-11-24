@@ -1,12 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
-import ChatPanel from "#/components/chat/ChatPanel";
+import Career from "#/components/home/Career";
+import ChatSection from "#/components/home/ChatSection";
+import Hero from "#/components/home/Hero";
+import Projects from "#/components/home/Projects";
+import Stack from "#/components/home/Stack";
 
 export const Route = createFileRoute("/")({ component: Home });
 
 function Home() {
 	return (
-		<main className="page-wrap px-4 py-12">
-			<ChatPanel />
+		<main>
+			<Hero />
+			<ChatSection />
+			<Career />
+			<Projects />
+			<Stack />
 		</main>
 	);
 }
