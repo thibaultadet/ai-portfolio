@@ -50,3 +50,18 @@ Reprise d'une confiserie familiale.
 - Développement avec agents IA (Claude Code).
 - Conception de produits SaaS, expérience utilisateur.
 - Odoo (ERP), logistique.
+
+## Fondamentaux
+Les bases de conception derrière ses projets, avec leur preuve :
+- Programmation orientée objet (Ruby) : héritage STI (agenda Beny : rendez-vous et tâches dans `ScheduledItem`, types d'utilisateurs), associations polymorphes (documents rattachés aux actifs ou à la personne protégée, soldes des actifs et des crédits), modules partagés (concerns `Signable` et `Remindable` chez Embarq), objets client dédiés (`Agents::Categorization`).
+- Principes SOLID, appliqués au quotidien.
+- Abstraction et design patterns : couche bancaire indépendante du fournisseur, qui a permis de remplacer Powens par Linxo sans toucher au produit.
+- Domain-Driven Design : modéliser à partir du langage métier (portage salarial chez Embarq, protection juridique chez Beny).
+- Modélisation de données relationnelle (PostgreSQL) et machines à états (AASM pour la génération du compte de gestion).
+- Conception d'API GraphQL (Embarq).
+- Traitements asynchrones : jobs Sidekiq, tâches planifiées, génération PDF en arrière-plan.
+- Autorisations par politiques (Pundit).
+- Tests automatisés (RSpec, Vitest) et TDD.
+- Typage statique (TypeScript).
+- Refactoring et migrations à grande échelle (migrations front : projets.md ; refonte du modèle Contact côté API).
+- Code review : en lead dev chez Embarq, puis sur les PR des agents chez Beny.

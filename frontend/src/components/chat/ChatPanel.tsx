@@ -2,9 +2,27 @@ import { type SubmitEvent, useEffect, useRef, useState } from "react";
 import ChatBubble from "#/components/chat/ChatBubble";
 import ChatComposer from "#/components/chat/ChatComposer";
 import ChatNotice from "#/components/chat/ChatNotice";
+import SuggestionChip, {
+	type SuggestionKind,
+} from "#/components/chat/SuggestionChip";
 import { type ChatMessage, streamChat } from "#/lib/api/chat-stream";
 
 type UIMessage = ChatMessage & { id: string };
+
+const SUGGESTIONS: { kind: SuggestionKind; label: string; question: string }[] =
+	[
+		{
+			kind: "project",
+			label: "Ses projets",
+			question: "Quels projets a-t-il réalisés ?",
+		},
+		{
+			kind: "stack",
+			label: "Sa stack",
+			question: "Quelle est sa stack technique ?",
+		},
+		{ kind: "cv", label: "Son parcours", question: "Résume son parcours." },
+	];
 
 type Failure = { title: string; question: string };
 
@@ -123,7 +141,20 @@ const ChatPanel = () => {
 				)}
 				<div ref={endRef} />
 			</div>
-			<div className="px-5 pb-5">
+			<div className="flex flex-col gap-3 px-5 pb-5">
+				{messages.length === 0 && (
+					<div className="flex flex-wrap gap-2">
+						{SUGGESTIONS.map(({ kind, label, question }) => (
+							<SuggestionChip
+								key={kind}
+								kind={kind}
+								label={label}
+								onClick={() => send(question)}
+								disabled={isStreaming || isRateLimited}
+							/>
+						))}
+					</div>
+				)}
 				<ChatComposer
 					input={input}
 					onInputChange={setInput}
