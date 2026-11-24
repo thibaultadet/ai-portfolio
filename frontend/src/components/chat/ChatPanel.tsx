@@ -33,7 +33,7 @@ const ChatPanel = () => {
 	const [failure, setFailure] = useState<Failure | null>(null);
 	const [secondsLeft, setSecondsLeft] = useState(0);
 	const abortRef = useRef<AbortController | null>(null);
-	const endRef = useRef<HTMLDivElement>(null);
+	const scrollRef = useRef<HTMLDivElement>(null);
 
 	const isRateLimited = secondsLeft > 0;
 
@@ -107,9 +107,11 @@ const ChatPanel = () => {
 
 	useEffect(() => () => abortRef.current?.abort(), []);
 
+	// Défile le conteneur seul : scrollIntoView ferait aussi défiler la page.
 	// biome-ignore lint/correctness/useExhaustiveDependencies: messages et les bandeaux déclenchent le scroll sans être lus.
 	useEffect(() => {
-		endRef.current?.scrollIntoView({ block: "end" });
+		const el = scrollRef.current;
+		if (el) el.scrollTop = el.scrollHeight;
 	}, [messages, failure, isRateLimited]);
 
 	const lastId = messages.at(-1)?.id;
@@ -117,6 +119,7 @@ const ChatPanel = () => {
 	return (
 		<div className="flex h-150 flex-col overflow-hidden rounded-lg border-2 border-input bg-surface shadow-offset">
 			<div
+				ref={scrollRef}
 				className="scrollbar-chat flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto px-5 pt-5 pb-3"
 				aria-live="polite"
 			>
@@ -139,7 +142,6 @@ const ChatPanel = () => {
 				{isRateLimited && (
 					<ChatNotice variant="rate-limit" secondsLeft={secondsLeft} />
 				)}
-				<div ref={endRef} />
 			</div>
 			<div className="flex flex-col gap-3 px-5 pb-5">
 				{messages.length === 0 && (

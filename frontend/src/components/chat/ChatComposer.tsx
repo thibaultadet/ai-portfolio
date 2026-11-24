@@ -1,8 +1,8 @@
-import { cn } from "cn";
 import { CircleAlert, Square } from "lucide-react";
 import { type SubmitEvent, useId } from "react";
 import { Button } from "#/components/ui/button";
 import { Input } from "#/components/ui/input";
+import { cn } from "#/lib/utils";
 
 const MAX_LENGTH = 2000;
 
