@@ -3,6 +3,7 @@
 @plugin '@tailwindcss/typography';
 
 @import "tw-animate-css";
+@source "../node_modules/streamdown/dist/*.js";
 
 /* Le thème est posé par THEME_INIT_SCRIPT (__root.tsx) : classe .dark sur <html>. */
 @custom-variant dark (&:is(.dark *));
@@ -118,6 +119,8 @@
   --color-ring: var(--ring);
 
   /* DS, hors shadcn */
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
   --color-surface: var(--surface);
   --color-surface-raised: var(--surface-raised);
   --color-sage: var(--sage);
@@ -162,18 +165,44 @@
   --text-heading: 22px;
   --text-heading--line-height: 1.25;
   --text-heading--font-weight: 700;
-  --text-body-lg: 17px;
+  --text-body-lg: 18px;
   --text-body-lg--line-height: 1.5;
-  --text-body: 15px;
+  --text-body: 16px;
   --text-body--line-height: 1.5;
-  --text-label: 13px;
+  --text-label: 14px;
   --text-label--line-height: 1.3;
   --text-label--font-weight: 500;
   /* À combiner avec `uppercase`. */
-  --text-overline: 11px;
+  --text-overline: 12px;
   --text-overline--line-height: 1.3;
   --text-overline--font-weight: 700;
   --text-overline--letter-spacing: 0.06em;
+}
+
+/*
+ * Barre de défilement du DS : pouce pilule ink-muted de 8px, piste transparente.
+ * Chrome/Safari : pseudo-éléments ::-webkit-scrollbar (largeur libre).
+ * Firefox : pas de largeur libre, seulement thin/auto (repli via @supports).
+ * Ne pas poser scrollbar-width/color hors @supports : Chrome 121+ ignorerait
+ * alors les ::-webkit-scrollbar.
+ */
+@utility scrollbar-chat {
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+    /* Garde le pouce hors du coin arrondi du panneau (radius-lg). */
+    margin-block: 16px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: var(--ink-muted);
+    border-radius: 999px;
+  }
+  @supports not selector(::-webkit-scrollbar) {
+    scrollbar-width: auto;
+    scrollbar-color: var(--ink-muted) transparent;
+  }
 }
 
 html,
